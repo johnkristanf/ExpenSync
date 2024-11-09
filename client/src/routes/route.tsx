@@ -1,6 +1,8 @@
 import DashboardPage from "@/pages/Dashboard";
-import LoginPage from "@/pages/Login";
+import SignInPage from "@/pages/SignIn";
 import RegisterPage from "@/pages/Register";
+import queryClient from "@/utils/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -12,12 +14,20 @@ export const ROUTER = createBrowserRouter([
 
     {
         path: "/signin",
-        element: <LoginPage />,
+        element: (
+            <QueryClientProvider client={queryClient}>
+                <SignInPage />
+            </QueryClientProvider>
+        ),
     },
 
     {
         path: "/register",
-        element: <RegisterPage />,
+        element: (
+            <QueryClientProvider client={queryClient}>
+                <RegisterPage />
+            </QueryClientProvider>
+        ),
     },
 
     {
