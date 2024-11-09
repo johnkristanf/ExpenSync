@@ -8,16 +8,26 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private logger = new Logger(UsersService.name, { timestamp: true })
   ) {}
+
+  private logger = new Logger(UsersService.name, { timestamp: true })
 
   findAll(): Promise<User[]> {
     return this.userRepository.find();
   }
 
-  
+  async findUserByEmail(email: string): Promise<User | null> {
+    this.logger.debug(`Login Email: ${email}`);
 
+    return await this.userRepository.findOne({
+      where: {email: email}
+    });
+  }
+
+  
   createUser(name: string, email: string, password: string): Promise<User> {
+    this.logger.debug(`Creating user with email: ${email}`);
+    
     const user = this.userRepository.create({ name, email, password });
     return this.userRepository.save(user);
   }

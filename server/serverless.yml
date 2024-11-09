@@ -6,6 +6,8 @@ provider:
   region: us-east-1
   environment:
     DATABASE_URL: ${env:DATABASE_URL}
+    JWT_SECRET: ${env:JWT_SECRET}
+    NODE_ENV: ${env:NODE_ENV}
 
 functions:
   api:
@@ -14,9 +16,18 @@ functions:
       - http:
           path: /users
           method: ANY
+
       - http:
-          path: /users/{proxy+}
-          method: ANY
+          path: /auth/register
+          method: POST
+
+      - http:
+          path: /auth/signin
+          method: POST
+
+      - http:
+          path: /auth/profile
+          method: GET
 
 plugins:
   - serverless-offline
