@@ -1,8 +1,20 @@
+import { RotatingLines } from "react-loader-spinner";
 
 export function Loader(){
     return(
-        <div className="h-screen w-full">
-            <svg className="animate-spin h-[200px] w-[200px] mr-3" viewBox="0 0 24 24" />
-        </div>
+        <>
+            <div className="fixed top-0 h-screen w-full bg-gray-100 opacity-75"></div>
+
+            <div className="flex justify-center items-center w-full h-screen z-50">
+                <RotatingLines 
+                    visible={true}
+                    width="150"
+                    strokeWidth="5"
+                    animationDuration="0.75"
+                    ariaLabel="rotating-lines-loading"
+                    strokeColor="#4f46e5" 
+                />
+            </div>
+        </>
     )
 }
