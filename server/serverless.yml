@@ -26,6 +26,10 @@ functions:
           method: POST
 
       - http:
+          path: /wallet/get
+          method: GET
+
+      - http:
           path: /wallet/add
           method: POST
 
