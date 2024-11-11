@@ -9,19 +9,29 @@ import {
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const SuccessDialog = () => {
+interface SuccessDialogProps {
+    title: string,
+    message: string,
+}
+
+const SuccessDialog = ({title, message}: SuccessDialogProps) => {
     return(
         <AlertDialog open={true}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                 <AlertDialogTitle className="flex items-center gap-1"> 
                     <FontAwesomeIcon icon={faCircleCheck} className="text-green-600"/> 
-                    Registration Successful!
+                    { title }
+                    
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                    You are going to get redirected to signin page to get started
+                    { message }
+                    
                 </AlertDialogDescription>
                 </AlertDialogHeader>
+
+                       
+                
                 
             </AlertDialogContent>
         </AlertDialog>
