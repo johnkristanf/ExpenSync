@@ -1,6 +1,15 @@
-import { faBullseye, faCircleDollarToSlot, faGauge, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faCircleDollarToSlot, faGauge, faMoneyBillTrendUp, faPiggyBank, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
+
+
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip"
+import { TooltipTrigger } from "@radix-ui/react-tooltip";
 
 function SideBar(){
     return(
@@ -12,25 +21,37 @@ function SideBar(){
     )
 }
 
-function Links(){
+function Links() {
     const links = [
-        {icon: <FontAwesomeIcon icon={faGauge} />, to: "/dashboard"},
-        {icon: <FontAwesomeIcon icon={faWallet} />, to: "/wallets"},
-        {icon: <FontAwesomeIcon icon={faCircleDollarToSlot} />, to: "/budgets"},
-        {icon: <FontAwesomeIcon icon={faBullseye} />, to: "/goals"},
-    ]
+        {icon: faGauge, to: "/dashboard", name: "Dashboard"},
+        {icon: faWallet, to: "/wallets", name: "Wallets"},
+        {icon: faCircleDollarToSlot, to: "/budgets", name: "Budgets"},
+        {icon: faPiggyBank, to: "/savings", name: "Savings"},
+        {icon: faMoneyBillTrendUp, to: "/investments", name: "Investments"},
+    ];
 
     return (
-        <div className="flex flex-col items-center gap-12 font-semibold text-white ">
-            {
-                links.map((link) => (
-                    <Link key={link.to} to={link.to} className="text-2xl">
-                        { link.icon }
-                    </Link>
-                ))
-            }
+        <div className="flex flex-col items-center gap-12 font-semibold text-white">
+            {links.map((link) => (
+                <TooltipProvider key={link.to}>
+                    <Tooltip delayDuration={50} >
+                        <TooltipTrigger asChild>
+                            <Link to={link.to} className="text-2xl">
+                                <FontAwesomeIcon icon={link.icon}/>
+                            </Link>
+                        </TooltipTrigger>
+
+                        <TooltipContent side="right" align="center" className="text-indigo-600 bg-white font-semibold text-sm">
+                            <p>{link.name}</p>
+                        </TooltipContent>
+
+                    </Tooltip>
+                </TooltipProvider>
+            ))}
         </div>
     );
 }
+
+
 
 export default SideBar;
