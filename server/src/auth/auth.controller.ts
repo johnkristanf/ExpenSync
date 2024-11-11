@@ -14,19 +14,19 @@ export class AuthController {
 
     @HttpCode(HttpStatus.CREATED)
     @Post('register')
-    register(
+    registerController(
         @Body() registerDTO: RegisterUserDTO
     ){
         return this.authService.register(registerDTO.name, registerDTO.email, registerDTO.password)
     }
 
     @UseGuards(LocalAuthGuard)
-    @HttpCode(HttpStatus.OK)
     @Post('signin')
-    async signIn(
+    async signInController(
         @Request() req, 
         @Res({ passthrough: true }) res: Response
     ): Promise<{ message: string; }> {
+        
         this.logger.debug(`Request Payload: ${req.user}`)
         const jwtToken = await this.authService.signedJwt(req.user);
 
@@ -41,7 +41,7 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Get('profile')
-    getProfile(
+    getProfileController(
         @Request() req
     ) {
         this.logger.debug(`Request Payload: ${req.user}`)

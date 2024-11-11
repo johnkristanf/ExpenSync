@@ -27,8 +27,11 @@ export class AuthService {
 
         if(user){
             const isMatch = await compare(password, user.password);    
-            if(isMatch) return user;   
-        }
+            this.logger.debug(`is validate match? ${isMatch}`)
+            if(isMatch){
+                return user;   
+            } 
+        } 
              
         return null;
     }
