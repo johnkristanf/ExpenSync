@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user/user';
 import { UsersModule } from './users/users.module';
+import { WalletModule } from './wallet/wallet.module';
+import { Wallet } from './wallet/entities/wallet';
 
 @Module({
   imports: [
@@ -13,10 +15,11 @@ import { UsersModule } from './users/users.module';
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
-      entities: [User]
+      entities: [User, Wallet]
     }),
     AuthModule,
-    UsersModule
+    UsersModule,
+    WalletModule
   ],
 })
 export class AppModule {}
