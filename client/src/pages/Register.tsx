@@ -35,7 +35,12 @@ function RegisterPage(){
         <>
             { mutation.isPending && <Loader /> }
 
-            { mutation.isSuccess && <SuccessDialog /> }
+            { mutation.isSuccess && (
+                <SuccessDialog 
+                    title="Registration Successful!"
+                    message="You are going to get redirected to signin page to get started"
+                />
+            ) }
 
             <div className="flex justify-center items-center w-full h-screen bg-gray-200">
                 <div className={classNames(
@@ -88,6 +93,10 @@ function RegisterPage(){
                                     {
                                         ...register("email", { 
                                             required: true,
+                                            pattern: {
+                                                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                                                message: "Please enter a valid email address",
+                                            },
                                         })
 
                                     } 
@@ -99,6 +108,11 @@ function RegisterPage(){
                             {
                                 errors.email?.type == "required" && <span className="text-red-800">Email is required</span>
                             }
+
+                            {
+                                errors.email?.type == "pattern" && <span className="text-red-800">Invalid Email Address</span>
+                            }
+
 
                         </div>
 
@@ -120,7 +134,8 @@ function RegisterPage(){
                             <input
                                 type="password"
                                 {...register("password", {
-                                    required: true,                              
+                                    required: true, 
+                                    minLength: 8                             
                                 })}
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                             />
@@ -128,6 +143,10 @@ function RegisterPage(){
 
                         {
                             errors.password?.type == "required" && <span className="text-red-800">Password is required</span>
+                        }
+
+                        {
+                            errors.password?.type == "minLength" && <span className="text-red-800">Password must have atleast 8 characters</span>
                         }
 
 
