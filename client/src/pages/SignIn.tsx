@@ -22,7 +22,6 @@ function SignInPage(){
 
 
     const onSubmit: SubmitHandler<SignInCredentials> = data => {
-        console.log(data);
         mutation.mutate(data)
         reset();
     } 
@@ -49,6 +48,12 @@ function SignInPage(){
 
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+
+                        {
+                            mutation.isError && (<h1 className="font-bold text-red-800">{ mutation.error.message }</h1>)
+                        }
+                        
+
                         <div>
                             <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                                 Email address
@@ -58,10 +63,6 @@ function SignInPage(){
                                     {
                                         ...register("email", { 
                                             required: true,
-                                            pattern: {
-                                                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                                                message: "Please enter a valid email address",
-                                            },
                                         })
 
                                     } 
@@ -74,9 +75,7 @@ function SignInPage(){
                                 errors.email?.type == "required" && <span className="text-red-800">Email is required</span>
                             }
 
-                            {
-                                errors.email?.type == "pattern" && <span className="text-red-800">Invalid Email Address</span> 
-                            }
+                           
 
                         </div>
                             
@@ -97,10 +96,6 @@ function SignInPage(){
                                 type="password"
                                 {...register("password", {
                                     required: true,
-                                    minLength: {
-                                      value: 8,
-                                      message: "Password must be at least 8 characters long",
-                                    },
                                 })}
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                             />
