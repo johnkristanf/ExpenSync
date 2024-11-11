@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Request, UseGuards } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { NewWalletDTO } from './dto/wallet';
@@ -27,6 +27,18 @@ export class WalletController {
         )
 
         return newWallet;
+    }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Get('get')
+    async getWalletsController(
+        @Request() req,
+    ) {
+        this.logger.debug(`Request Payload: ${req.user.id}`)
+        const wallets = await this.walletService.getWallets(req.user.id);
+
+        return wallets;
     }
 
 }
