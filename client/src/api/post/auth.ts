@@ -13,7 +13,7 @@ export const registerUser = async (userData: RegistrationData): Promise<Response
 
 
 export const signInUser = async (userData: SignInCredentials): Promise<Response> => {
-    return fetch('http://localhost:3000/dev/auth/signin', {
+    const response = await fetch('http://localhost:3000/dev/auth/signin', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -21,4 +21,11 @@ export const signInUser = async (userData: SignInCredentials): Promise<Response>
         },
         body: JSON.stringify(userData),
     });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to sign in');
+    }
+
+    return response.json();
 };
