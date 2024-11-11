@@ -17,11 +17,16 @@ export class UsersService {
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
-    this.logger.debug(`Login Email: ${email}`);
 
-    return await this.userRepository.findOne({
-      where: {email: email}
-    });
+    const user = await this.userRepository.findOne({ where: { email } });
+    this.logger.debug(`Query result: ${user ? 'User found' : 'No user found'}`);
+    
+    if(user){
+      this.logger.debug(`Found Email: ${user.email}`);
+      return user;
+    } 
+
+    return null;
   }
 
   
