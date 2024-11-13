@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 
 import { hash, genSalt, compare } from 'bcrypt';
-import { User } from 'src/users/entities/user/user';
+import { User } from 'src/users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
