@@ -1,5 +1,3 @@
-
-import { getIcons } from "@/api/get/icon";
 import { addNewWallet } from "@/api/post/wallets";
 
 import { 
@@ -13,7 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { AddWalletType } from "@/types/wallets";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -24,6 +22,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Icon } from '@iconify/react';
 
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useSearchIcons } from "@/hooks/useSearchIcons";
 
 
 function AddNewWalletModal(){
@@ -34,15 +33,7 @@ function AddNewWalletModal(){
     const [openSuccessDialog, setOpenSuccessDialog] = useState<boolean>(false);
 
     const queryClient = useQueryClient();
-
-    const { data } = useQuery({
-        queryKey: ['icons'],
-        queryFn: getIcons,
-    });
-
-    const matchingIcons = searchIcon && data.uncategorized
-        .filter((icon: string) => icon.toLowerCase().includes(searchIcon))
-        .slice(0, 6); 
+    const { matchingIcons, isSearchingIcons } = useSearchIcons(searchIcon);
 
     const { register, handleSubmit, reset, setValue } = useForm<AddWalletType>();
 
@@ -111,6 +102,16 @@ function AddNewWalletModal(){
                                 </div>
 
                                 <div className="flex gap-4 flex-wrap">
+
+                                    {
+                                        isSearchingIcons && (
+                                            <h1 className="text-indigo-600 font-semibold text-xl">
+                                                Searching Icons....
+                                            </h1>
+                                        )
+                                    }
+
+
                                     {
                                         matchingIcons && matchingIcons.length > 0 && matchingIcons.map((icon: string) => (
                                             <div 
