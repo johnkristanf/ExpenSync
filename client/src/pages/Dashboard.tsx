@@ -28,6 +28,7 @@ import { Bar, BarChart, XAxis } from "recharts";
 import {
     Table,
     TableBody,
+    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -259,7 +260,10 @@ function TransactionHistory(){
     return(
         <Table className="w-[94%] bg-white p-8 rounded-md">
             <TableHeader>
-                <h1 className="w-52 text-xl text-indigo-800 p-3">Transaction History</h1>
+                <TableCaption className="w-52 text-xl text-indigo-800 p-3">
+                    Transaction History
+                </TableCaption>
+                
                 <TableRow>
                 <TableHead className="w-[100px]">Invoice</TableHead>
                 <TableHead>Status</TableHead>

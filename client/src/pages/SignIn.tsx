@@ -49,11 +49,6 @@ function SignInPage(){
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-                        {
-                            mutation.isError && (<h1 className="font-bold text-red-800">{ mutation.error.message }</h1>)
-                        }
-                        
-
                         <div>
                             <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                                 Email address

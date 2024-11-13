@@ -3,17 +3,47 @@ import AddNewWalletModal from "./AddNewWalletModal";
 import { getWallets } from "@/api/get/wallets";
 import { Wallet } from "@/types/wallets";
 import { Icon } from "@iconify/react";
+import useWalletStore from "@/store/store";
+import { useEffect, useMemo } from "react";
 
 function WalletCard(){
 
-    const { data } = useQuery({
+    const { data, isLoading, isSuccess } = useQuery({
         queryKey: ['wallets'],
         queryFn: getWallets
-    })
+    });
 
-    const wallets: Wallet[] = data || [];
+    const setWallet = useWalletStore((state) => state.addWallet);
+    const wallets: Wallet[] = useMemo(() => data || [], [data]);
 
-    console.log("wallets: ", wallets);
+
+    const initialWallet = useMemo(() => wallets[0], [wallets]);
+
+    useEffect(() => {
+        if(initialWallet) setWallet(initialWallet);
+    }, [initialWallet, setWallet]);
+
+
+    const handleUpdateWallet = (
+        id: number,
+        name: string,
+        amount: number,
+        icon: string,
+        user_id: number,
+        created_at: Date
+    ) => {
+
+        const updatedWallet: Wallet = {
+            id,
+            name,
+            amount,
+            icon,
+            user_id,
+            created_at
+        };
+      
+        setWallet(updatedWallet);
+    }
     
     
     return(
@@ -22,10 +52,26 @@ function WalletCard(){
                 {/* AFTER THE USER CLICK THE DIV STORE THE WALLET DATA IN ZUSTAND STATE */}
 
                 {
+                    isLoading && (
+                        <h1 className="text-indigo-800 text-lg">
+                            Loading Wallets....
+                        </h1>
+                    )
+                }
+
+                {
                     wallets.map((wallet) => (
                         <div 
                             key={wallet.id}
                             className="flex gap-4 bg-white rounded-md p-6 w-full hover:cursor-pointer"
+                            onClick={() => handleUpdateWallet(
+                                wallet.id,
+                                wallet.name,
+                                wallet.amount,
+                                wallet.icon,
+                                wallet.user_id,
+                                wallet.created_at
+                            )}
                         >
                             <div className="bg-indigo-100 p-3 rounded-full">
                                 <Icon 
@@ -44,11 +90,11 @@ function WalletCard(){
                     ))
                 }
 
-                
+                {
+                    isSuccess && ( <AddNewWalletModal />)
+                }
 
-                <AddNewWalletModal />
-
-                </div>
+            </div>
     )
 }
 
