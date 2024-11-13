@@ -26,6 +26,10 @@ functions:
             method: POST
 
         - http:
+            path: /auth/profile
+            method: GET
+
+        - http:
             path: /wallet/get
             method: GET
 
@@ -42,8 +46,10 @@ functions:
             method: POST
 
         - http:
-            path: /auth/profile
-            method: GET
+            path: /transaction/add
+            method: POST
+
+        
 
 plugins:
   - serverless-offline

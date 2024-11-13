@@ -8,6 +8,8 @@ import { WalletModule } from './wallet/wallet.module';
 import { Wallet } from './wallet/entities/wallet.entity';
 import { BudgetsModule } from './budgets/budgets.module';
 import { Budgets } from './budgets/entities/budgets.entity';
+import { TransactionModule } from './transaction/transaction.module';
+import { Transaction } from './transaction/entities/transaction.entities';
 
 @Module({
   imports: [
@@ -17,12 +19,13 @@ import { Budgets } from './budgets/entities/budgets.entity';
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
-      entities: [User, Wallet, Budgets]
+      entities: [User, Wallet, Budgets, Transaction]
     }),
     AuthModule,
     UsersModule,
     WalletModule,
-    BudgetsModule
+    BudgetsModule,
+    TransactionModule
   ],
 })
 export class AppModule {}
