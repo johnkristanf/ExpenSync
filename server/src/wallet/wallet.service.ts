@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Wallet } from './entities/wallet';
+import { Wallet } from './entities/wallet.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
