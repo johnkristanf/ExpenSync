@@ -17,7 +17,7 @@ export class Budgets {
   @Column()
   budget: number;
 
-  @Column()
+  @Column() 
   wallet_id: number;
 
   @Column()
