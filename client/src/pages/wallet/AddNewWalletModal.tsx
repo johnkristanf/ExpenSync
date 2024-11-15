@@ -27,7 +27,7 @@ import { useSearchIcons } from "@/hooks/useSearchIcons";
 
 function AddNewWalletModal(){
 
-    const [searchIcon, setSearchIcon] = useState<string>();
+    const [searchIcon, setSearchIcon] = useState<string>("car");
     const [clickedIcon, setClickedIcon] = useState<string | null>(null);
     const [open, setOpen] = useState<boolean>(false);
     const [openSuccessDialog, setOpenSuccessDialog] = useState<boolean>(false);
@@ -79,7 +79,7 @@ function AddNewWalletModal(){
                     </div>
                 </AlertDialogTrigger>
 
-                <AlertDialogContent >
+                <AlertDialogContent className="h-[90vh] overflow-auto">
                     <AlertDialogHeader>
                         <AlertDialogTitle>Set your Wallet Information</AlertDialogTitle>
 
@@ -131,8 +131,6 @@ function AddNewWalletModal(){
                                                     width={20} 
                                                     height={20} 
                                                 />
-
-                                                {icon}
                                             </div>
                                         ))
                                     }
@@ -199,10 +197,8 @@ function AddNewWalletModal(){
                     <AlertDialogFooter>
                         <AlertDialogCancel 
                             className={classNames(
-                                "w-full bg-black text-white",
-                                mutation.isPending ? "bg-gray-400 cursor-not-allowed" : ""
+                                "w-full bg-black text-white hover:opacity-75",
                             )}
-                            disabled={mutation.isPending}
                         >
                             Cancel
                         </AlertDialogCancel>
