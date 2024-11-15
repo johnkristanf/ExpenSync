@@ -16,22 +16,15 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  async findUserByEmail(email: string): Promise<{id: number, password: string} | null> {
+  async findUserByEmail(email: string): Promise<User | null> {
 
     try {
 
-      const user = await this.userRepository.findOneOrFail({
+      const user = await this.userRepository.findOne({
         where: { email },
-        select: ['id', 'password'],
       });
-  
-  
-      const userData = { 
-        id: user.id, 
-        password: user.password 
-      }
       
-      return userData;
+      return user;
 
     } catch (error) {
       console.error('Database Error:', error);
