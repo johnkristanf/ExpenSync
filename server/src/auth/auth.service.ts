@@ -1,9 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 
 import { hash, genSalt, compare } from 'bcrypt';
 import { User } from 'src/users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -15,25 +16,40 @@ export class AuthService {
     private logger = new Logger(AuthService.name, { timestamp: true });
 
     async register(name: string, email: string, password: string): Promise<User> {
-        
-        const saltRounds = await genSalt();
 
-        const hashedPassword = await hash(password, saltRounds);
-        return this.usersServices.createUser(name, email, hashedPassword);
+        try {
+            const saltRounds = await genSalt();
+
+            const hashedPassword = await hash(password, saltRounds);
+            return this.usersServices.createUser(name, email, hashedPassword);
+
+        } catch (error) {
+            console.error('Database Error:', error);
+            throw new InternalServerErrorException('Failed to register user');
+        }
     }
 
-    async validateUser(email: string, password: string): Promise<User | null> {
-        const user = await this.usersServices.findUserByEmail(email);
+    async validateUser(email: string, password: string): Promise<number | null> {
 
-        if(user){
-            const isMatch = await compare(password, user.password);    
-            this.logger.debug(`is validate match? ${isMatch}`)
-            if(isMatch){
-                return user;   
-            } 
-        } 
-             
-        return null;
+        try {
+            const userData = await this.usersServices.findUserByEmail(email);
+
+                this.logger.debug(`userData id: ${userData.id}`)
+
+                if(userData){
+                    const isMatch = await compare(password, userData.password);    
+                    if (isMatch) {
+                        return userData.id;
+                    }
+                } 
+                    
+                return null;
+
+        } catch (error) {
+            console.error('Database Error:', error);
+            throw new InternalServerErrorException('Failed to validateUser');
+        }
+
     }
 
     async signedJwt(user: User): Promise<string> {
@@ -43,7 +59,10 @@ export class AuthService {
             sub: user.id 
         };
 
-        return this.jwtService.sign(payload)
+        return this.jwtService.signAsync(payload, {
+            secret: jwtConstants.secret,
+            expiresIn: '1h', 
+        });
     }
 
 }
