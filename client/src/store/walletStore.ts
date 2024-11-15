@@ -15,9 +15,7 @@ const InitialState: Wallet = {
     created_at: new Date(),
 }
 
-const useWalletStore = create<WalletStore>((set) => ({
+export const useWalletStore = create<WalletStore>((set) => ({
     wallet: InitialState,
     addWallet: (wallet) => set({ wallet }),
 }))
-
-export default useWalletStore;

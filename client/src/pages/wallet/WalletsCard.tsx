@@ -3,7 +3,7 @@ import AddNewWalletModal from "./AddNewWalletModal";
 import { getWallets } from "@/api/get/wallets";
 import { Wallet } from "@/types/wallets";
 import { Icon } from "@iconify/react";
-import useWalletStore from "@/store/store";
+import { useWalletStore } from "@/store/walletStore";
 import { useEffect, useMemo } from "react";
 
 function WalletCard(){
