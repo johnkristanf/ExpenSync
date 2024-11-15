@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import SuccessDialog from "@/components/successDialog";
@@ -22,14 +21,12 @@ import { AddBudgetType } from "@/types/budgets";
 import { addNewBudget } from "@/api/post/budget";
 import { getWallets } from "@/api/get/wallets";
 import { Wallet } from "@/types/wallets";
+import { useModalStore } from "@/store/modalStore";
 
 function AddBudgetWalletModal() {
-    const [searchIcon, setSearchIcon] = useState<string>("car");
-    const [clickedIcon, setClickedIcon] = useState<string | null>(null);
 
-    // add this on the zustand to make it cleaner
-    const [open, setOpen] = useState<boolean>(false);
-    const [openSuccessDialog, setOpenSuccessDialog] = useState<boolean>(false);
+    const { searchIcon, clickedIcon, openModal, openSuccessDialog, setSearchIcon, setClickedIcon, setOpenModal, setOpenSuccessDialog } = useModalStore();
+
 
     const queryClient = useQueryClient();
     const { matchingIcons, isSearchingIcons } = useSearchIcons(searchIcon);
@@ -39,19 +36,19 @@ function AddBudgetWalletModal() {
     const mutation = useMutation({
         mutationFn: addNewBudget,
         onSuccess: (data) => {
-            console.log("Wallet added successfully:", data);
+            console.log("Budget added successfully:", data);
             setOpenSuccessDialog(true);
-            setOpen(false);
-            setSearchIcon("");
+            setOpenModal(false);
+            setSearchIcon("car");
             reset();
 
             setTimeout(() => {
                 setOpenSuccessDialog(false);
-                queryClient.invalidateQueries({ queryKey: ['wallets'] });
-            }, 3000);
+                queryClient.invalidateQueries({ queryKey: ['budgets'] });
+            }, 2000);
         },
         onError: (error) => {
-            console.error(`Add New Wallet Error: ${error.message}`);
+            console.error(`Add New Budget Error: ${error.message}`);
         }
     });
 
@@ -73,7 +70,7 @@ function AddBudgetWalletModal() {
                 />
             )}
 
-            <AlertDialog open={open} onOpenChange={setOpen}>
+            <AlertDialog open={openModal} onOpenChange={setOpenModal}>
                 <AlertDialogTrigger asChild>
                     <div className="flex justify-between bg-white rounded-md p-6 w-full border border-gray-200 hover:cursor-pointer">
                         <h1 className="text-indigo-800">Add new budget</h1>
@@ -226,7 +223,7 @@ function AddBudgetWalletModal() {
                                     mutation.isPending ? "bg-gray-400 cursor-not-allowed" : ""
                                 )}
                                 disabled={mutation.isPending}
-                                onClick={() => setOpen(false)}
+                                onClick={() => setOpenModal(false)}
                             >
                                 Cancel
                             </button>
