@@ -12,7 +12,6 @@ import {
 
 import { AddWalletType } from "@/types/wallets";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import SuccessDialog from "@/components/successDialog";
@@ -23,14 +22,12 @@ import { Icon } from '@iconify/react';
 
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useSearchIcons } from "@/hooks/useSearchIcons";
+import { useModalStore } from "@/store/modalStore";
 
 
 function AddNewWalletModal(){
 
-    const [searchIcon, setSearchIcon] = useState<string>("car");
-    const [clickedIcon, setClickedIcon] = useState<string | null>(null);
-    const [open, setOpen] = useState<boolean>(false);
-    const [openSuccessDialog, setOpenSuccessDialog] = useState<boolean>(false);
+    const { searchIcon, clickedIcon, openModal, openSuccessDialog, setSearchIcon, setClickedIcon, setOpenModal, setOpenSuccessDialog } = useModalStore();
 
     const queryClient = useQueryClient();
     const { matchingIcons, isSearchingIcons } = useSearchIcons(searchIcon);
@@ -42,14 +39,14 @@ function AddNewWalletModal(){
         onSuccess: (data) => {
             console.log("Wallet added successfully:", data);
             setOpenSuccessDialog(true)
-            setOpen(false);
-            setSearchIcon("");
+            setOpenModal(false);
+            setSearchIcon("car");
             reset();
 
             setTimeout(() => {
                 setOpenSuccessDialog(false);
                 queryClient.invalidateQueries({queryKey: ['wallets']})
-            }, 3000);
+            }, 2000);
         },
         onError: (error) => {
             console.error(`Add New Wallet Error: ${error.message}`);
@@ -68,7 +65,7 @@ function AddNewWalletModal(){
                 />
             ) }
 
-            <AlertDialog open={open} onOpenChange={setOpen}>
+            <AlertDialog open={openModal} onOpenChange={setOpenModal}>
                 <AlertDialogTrigger asChild>
                     <div className="flex justify-between bg-white rounded-md p-6 w-full border border-gray-200 hover:cursor-pointer">
                         <h1 className="text-indigo-800">Add new wallet</h1>
@@ -94,7 +91,6 @@ function AddNewWalletModal(){
                                         <input
                                             type="text"
                                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                                            value={searchIcon}
                                             onChange={(e) => setSearchIcon(e.target.value)}
                                         />
                                     </div>

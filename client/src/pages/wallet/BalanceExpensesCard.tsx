@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import useWalletStore from "@/store/store";
+import { useWalletStore } from "@/store/walletStore";
 
 function BalanceExpensesCard(){
 
