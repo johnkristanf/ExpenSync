@@ -1,30 +1,21 @@
-import { Body, Controller, Get, Logger, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { JwtAuthGuard } from 'src/core/guard/jwt-auth.guard';
-import { NewWalletDTO } from './dto/create-wallet-dto';
+import { CreateWalletDto } from './dto/create-wallet-dto';
 
 @Controller('wallet')
 export class WalletController {
     constructor(private walletService: WalletService){}
 
-    private logger = new Logger(WalletController.name, { timestamp: true })
-
-
     @UseGuards(JwtAuthGuard)
     @Post('add')
     async addNewWalletController(
         @Request() req,
-        @Body() newWalletDTO: NewWalletDTO
+        @Body() newWalletDTO: CreateWalletDto
 
     ) {
-        this.logger.debug(`Request Payload: ${req.user.id}`)
-
-        const newWallet = await this.walletService.addNewWallet(
-            newWalletDTO.name,
-            newWalletDTO.icon,
-            newWalletDTO.amount,
-            req.user.id
-        )
+        if(req.user.id) newWalletDTO.user_id = req.user.id
+        const newWallet = await this.walletService.createNewWallet(newWalletDTO)
 
         return newWallet;
     }
@@ -35,7 +26,6 @@ export class WalletController {
     async getWalletsController(
         @Request() req,
     ) {
-        this.logger.debug(`Request Payload: ${req.user.id}`)
         const wallets = await this.walletService.getWallets(req.user.id);
 
         return wallets;

@@ -13,7 +13,7 @@ export class BudgetsController {
         @Body() createBudgetDto: CreateBudgetDto,
         @Request() req,
     ) {
-        createBudgetDto.user_id = req.user.id;
+        if(req.user.id) createBudgetDto.user_id = req.user.id
         return this.budgetsService.createBudget(createBudgetDto)
     }
 

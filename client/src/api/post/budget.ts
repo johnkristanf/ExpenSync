@@ -1,7 +1,7 @@
 import { AddBudgetType } from "@/types/budgets";
 
 export const addNewBudget = async (budgetData: AddBudgetType): Promise<Response> => {
-    const response = await fetch('http://localhost:3000/dev/budgets/add', {
+    const response = await fetch('http://localhost:2500/dev/budgets/add', {
         method: 'POST',
         credentials: 'include',
         headers: {

@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Budgets } from './entities/budgets.entity';
 import { Repository } from 'typeorm';
 import { CreateBudgetDto } from './dto/create-budget-dto';
@@ -21,7 +21,7 @@ export class BudgetsService {
 
         } catch (error) {
             console.error('Database Error:', error);
-            throw new InternalServerErrorException('Failed to create new wallet');
+            throw new InternalServerErrorException('Failed to create new budget');
         }
        
     }
@@ -38,7 +38,7 @@ export class BudgetsService {
 
         } catch (error) {
             console.error('Database Error:', error);
-            throw new InternalServerErrorException('Failed to get budgets');
+            throw new NotFoundException('Failed to get budgets');
         }
     
     }

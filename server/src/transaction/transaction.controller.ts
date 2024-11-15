@@ -15,7 +15,7 @@ export class TransactionController {
         @Request() req, 
         @Body() createTransactionDTO: CreateTransactionDto
     ){
-        createTransactionDTO.user_id =  createTransactionDTO.user_id ?? req.user.id;
+        if(req.user.id) createTransactionDTO.user_id = req.user.id
         return this.transactionService.createTransaction(createTransactionDTO);
     }
 }
