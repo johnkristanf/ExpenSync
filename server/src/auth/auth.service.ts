@@ -4,7 +4,6 @@ import { UsersService } from 'src/users/users.service';
 import { hash, genSalt, compare } from 'bcrypt';
 import { User } from 'src/users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -29,17 +28,17 @@ export class AuthService {
         }
     }
 
-    async validateUser(email: string, password: string): Promise<number | null> {
+    async validateUser(email: string, password: string): Promise<User | null> {
 
         try {
-            const userData = await this.usersServices.findUserByEmail(email);
+            const user = await this.usersServices.findUserByEmail(email);
 
-                this.logger.debug(`userData id: ${userData.id}`)
+                this.logger.debug(`user id: ${user.id}`)
 
-                if(userData){
-                    const isMatch = await compare(password, userData.password);    
+                if(user){
+                    const isMatch = await compare(password, user.password);    
                     if (isMatch) {
-                        return userData.id;
+                        return user;
                     }
                 } 
                     
@@ -59,10 +58,7 @@ export class AuthService {
             sub: user.id 
         };
 
-        return this.jwtService.signAsync(payload, {
-            secret: jwtConstants.secret,
-            expiresIn: '1h', 
-        });
+        return this.jwtService.sign(payload);
     }
 
 }
