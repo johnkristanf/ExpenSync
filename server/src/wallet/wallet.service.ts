@@ -1,7 +1,8 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException,  NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wallet } from './entities/wallet.entity';
 import { Repository } from 'typeorm';
+import { CreateWalletDto } from './dto/create-wallet-dto';
 
 @Injectable()
 export class WalletService {
@@ -10,15 +11,11 @@ export class WalletService {
         private walletRepository: Repository<Wallet>,
     ){}
 
-    private logger = new Logger(WalletService.name, { timestamp: true })
-
-
-    async addNewWallet(name: string, icon: string, amount: number, user_id: number): Promise<Wallet> {
-        this.logger.debug(`Creating wallet with name: ${name}`);
+    async createNewWallet(createWalletDto: CreateWalletDto): Promise<Wallet> {
 
         try {
         
-            const user = this.walletRepository.create({ name, icon, amount, user_id });
+            const user = this.walletRepository.create(createWalletDto);
             return await this.walletRepository.save(user);
 
         } catch (error) {
@@ -38,7 +35,7 @@ export class WalletService {
 
         } catch (error) {
             console.error('Database Error:', error);
-            throw new InternalServerErrorException('Failed to get wallets');
+            throw new NotFoundException('Failed to get wallets');
         }
     
     }
