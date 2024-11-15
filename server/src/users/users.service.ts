@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -16,17 +16,27 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  async findUserByEmail(email: string): Promise<User | null> {
+  async findUserByEmail(email: string): Promise<{id: number, password: string} | null> {
 
-    const user = await this.userRepository.findOne({ where: { email } });
-    this.logger.debug(`Query result: ${user ? 'User found' : 'No user found'}`);
-    
-    if(user){
-      this.logger.debug(`Found Email: ${user.email}`);
-      return user;
-    } 
+    try {
 
-    return null;
+      const user = await this.userRepository.findOneOrFail({
+        where: { email },
+        select: ['id', 'password'],
+      });
+  
+  
+      const userData = { 
+        id: user.id, 
+        password: user.password 
+      }
+      
+      return userData;
+
+    } catch (error) {
+      console.error('Database Error:', error);
+      throw new NotFoundException('User does not exist in our records');      
+    }
   }
 
   
