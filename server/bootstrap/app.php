@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Application;
@@ -18,13 +19,12 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->statefulApi();
     })
 
     ->withExceptions(function (Exceptions $exceptions) {
@@ -56,34 +56,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // RENDERS
 
-        $exceptions->render(function (Exception $e, Request $request){
-
-            if ($e instanceof ModelNotFoundException){
-                $routes = [
-                    'api/wallets/*' => 'Wallet Not Found',
-                    'api/budgets/*' => 'Budget Not Found'
-                ];
-    
-                foreach($routes as $route => $message){
-                    if($request->is($route)){
-                        return response()->json([
-                            'message' => $message,
-                            'error' =>   $e->getMessage()
-                        ], 404);
-                    }
-                }
-            }
-
-            if ($e instanceof NotFoundResourceException){
-                return response()->json([
-                    'message' => 'Resource not found',
-                    'error' => $e->getMessage()
-                ], 404);
-            }
-            
-
-            
-        });
 
         $exceptions->render(function (ValidationException $e){
             return response()->json([
@@ -94,19 +66,46 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
 
-        $exceptions->render(function (UnauthorizedHttpException $e){
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'error' => 'User unauthenticated',
+                    'message' => $e->getMessage(),
+                ], 401);  
+            }
+            
+        });
+
+
+        $exceptions->render(function (UnauthorizedException $e){
             return response()->json([
                 'error' => 'Unauthorized action',
                 'errors' => $e->getMessage(),
             ], 401);
         });
+        
 
+        $exceptions->render(function (ModelNotFoundException $e, Request $request){
+            $routes = [
+                'api/wallets/*' => 'Wallet Not Found',
+                'api/budgets/*' => 'Budget Not Found'
+            ];
+    
+            foreach($routes as $route => $message){
+                if($request->is($route)){
+                    return response()->json([
+                        'message' => $message,
+                        'error' =>   $e->getMessage()
+                    ], 404);
+                }
+            }
+        });
 
-        $exceptions->render(function (AuthorizationException $e) {
+        $exceptions->render(function (NotFoundHttpException $e){
             return response()->json([
-                'error' => 'Forbidden action',
-                'message' => $e->getMessage(),
-            ], 403);  
+                'message' => 'Resource not found',
+                'error' => $e->getMessage()
+            ], 404);
         });
         
 
