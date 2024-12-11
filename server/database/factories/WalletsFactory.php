@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,10 @@ class WalletsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->word(),
+            'icon' => fake()->imageUrl(64, 64, 'bussiness', true),
+            'amount' => fake()->randomFloat(2, 0, 10000),
+            'user_id' => User::factory(),
         ];
     }
 }
