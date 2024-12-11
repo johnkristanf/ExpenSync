@@ -12,7 +12,7 @@ class WalletsStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -26,7 +26,6 @@ class WalletsStoreRequest extends FormRequest
             'name' => 'required|string',
             'icon' => 'required|string',
             'amount' => 'required|numeric',
-            'user_id' => 'required|numeric',
         ];
     }
 }

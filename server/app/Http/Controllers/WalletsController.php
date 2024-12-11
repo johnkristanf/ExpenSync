@@ -5,20 +5,33 @@ namespace App\Http\Controllers;
 use App\Http\Requests\WalletsStoreRequest;
 use App\Http\Requests\WalletsUpdateRequest;
 use App\Models\Wallets;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class WalletsController extends Controller
+class WalletsController extends Controller 
 {
     
     public function index()
     {
-        return Wallets::all();
+        $wallets = Wallets::where('user_id', Auth::id())->get();
+        
+        return response()->json([
+            'wallets' => $wallets
+        ], 200);
     }
 
     public function store(WalletsStoreRequest $request)
     {
         $data = $request->validated();
-        return response()->json(Wallets::create($data), 201);
+
+        $newWallet = $request->user()->wallets()->create([
+            'name' => $data['name'],
+            'icon' => $data['icon'],
+            'amount' => $data['amount'],
+            'user_id' => Auth::id(),
+        ]);
+
+        return response()->json($newWallet, 201);
     }
 
     
