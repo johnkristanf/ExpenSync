@@ -6,7 +6,10 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
+
 
 class AuthController extends Controller
 {
@@ -40,6 +43,42 @@ class AuthController extends Controller
             'user' => $user,
         ], 201);
     }
+
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        $user = Socialite::driver('google')->user();
+        $this->handleSocialLogin($user, 'google');
+    }
+
+    protected function handleSocialLogin($socialUser, $provider)
+    {
+        $existingUser = User::where($provider . '_id', $socialUser->getId())->first();
+
+        if ($existingUser) {
+            $user = $existingUser;
+        } else {
+            $user = User::create([
+                'name' => $socialUser->getName(),
+                'email' => $socialUser->getEmail(),
+                $provider . '_id' => $socialUser->getId(),
+                'provider' => $provider,
+            ]);
+        }
+
+        Auth::guard('web')->login($user);
+
+        $token = $user->createToken('expensync')->plainTextToken;
+        
+        // ANG DAOT ANI KAY DLI MO REDIRECT POSSIBLE CORS PROBLEM
+        return redirect()->to('http://localhost:5000/dashboard');
+    }
+
 
 
     public function logout(Request $request)
