@@ -1,4 +1,5 @@
-name: Laravel CI CD Pipeline
+name: Laravel CI Pipeline
+
 on:
   push:
     branches:
@@ -6,39 +7,58 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch: null
-  
+  workflow_dispatch:  # Allows manual runs
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13  # PostgreSQL version
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-      - name: Install Dependencies
-        run: |
-          cd server 
-          sudo apt-get install unzip
-          composer install --prefer-dist --no-interaction
+    - name: Checkout Code
+      uses: actions/checkout@v2
 
-      - name: Setup Env
-        run: |
-          cd server 
-          cp .env.example .env
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: pgsql
 
-      - name: Generate application key
-        run: |
-          cd server 
-          php artisan key:generate
+    - name: Install Dependencies
+      run: |
+        cd server
+        composer install --prefer-dist --no-interaction
 
-      - name: Run tests and generate report
-        run: |
-          cd server 
-          php artisan migrate --env=testing
-          php artisan test --log-junit=tests/_output/test-report.xml
+    - name: Setup .env
+      run: |
+        cp server/.env.example server/.env
+        echo "DB_CONNECTION=pgsql" >> server/.env
+        echo "DB_HOST=127.0.0.1" >> server/.env
+        echo "DB_PORT=5432" >> server/.env
+        echo "DB_DATABASE=test_db" >> server/.env
+        echo "DB_USERNAME=test_user" >> server/.env
+        echo "DB_PASSWORD=test_password" >> server/.env
 
-      
+    - name: Run Migrations
+      run: |
+        cd server
+        php artisan migrate --env=testing
 
+    - name: Run Tests
+      run: |
+        cd server
+        php artisan test
