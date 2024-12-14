@@ -20,19 +20,25 @@ jobs:
           php-version: "8.1"
       - name: Install Dependencies
         run: |
+          cd server 
           sudo apt-get install unzip
           composer install --prefer-dist --no-interaction
+
       - name: Setup Env
-        run: cp .env.example .env
+        run: |
+          cd server 
+          cp .env.example .env
+
       - name: Generate application key
-        run: php artisan key:generate
+        run: |
+          cd server 
+          php artisan key:generate
+
       - name: Run tests and generate report
         run: |
+          cd server 
           php artisan migrate --env=testing
           php artisan test --log-junit=tests/_output/test-report.xml
-      - name: Upload test report
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-report
-          path: tests/_output/test-report.xml
+
+      
 
