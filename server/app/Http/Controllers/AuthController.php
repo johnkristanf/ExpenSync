@@ -50,10 +50,18 @@ class AuthController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(Request $request)
     {
         $user = Socialite::driver('google')->user();
-        $this->handleSocialLogin($user, 'google');
+        $token = $this->handleSocialLogin($user, 'google');
+
+        if ($token) {
+            return redirect()->to('http://localhost:5000/dashboard')
+                ->cookie('access_token', $token, 60, '/', null, true, true); 
+        }
+
+        return redirect()->to('http://localhost:5000/signin');
+
     }
 
     protected function handleSocialLogin($socialUser, $provider)
@@ -71,12 +79,22 @@ class AuthController extends Controller
             ]);
         }
 
-        Auth::guard('web')->login($user);
+        Auth::login($user);
 
-        $token = $user->createToken('expensync')->plainTextToken;
-        
-        // ANG DAOT ANI KAY DLI MO REDIRECT POSSIBLE CORS PROBLEM
-        return redirect()->to('http://localhost:5000/dashboard');
+        $token = $user->createToken('access_token')->plainTextToken;
+
+        return $token;
+    }
+
+
+    public function fetchUserData()
+    {
+        $user = User::where('id', Auth::id())->first();
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+        ]);
     }
 
 
@@ -84,6 +102,9 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
-        return response()->json(['message' => "Log out",], 200);
+        return redirect()->to('http://localhost:5000/signin')
+                        ->withoutCookie('XSRF-TOKEN')
+                        ->withoutCookie('access_token')
+                        ->withoutCookie('laravel_session');
     }
 }
