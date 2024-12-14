@@ -1,7 +1,9 @@
+import { setCSRFToken } from "@/api/get/token";
 import { signInUser } from "@/api/post/auth";
 import { Loader } from "@/components/loader";
 import { SignInCredentials } from "@/types/auth";
 import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -25,6 +27,15 @@ function SignInPage(){
         mutation.mutate(data)
         reset();
     } 
+
+    const handleGoogleLogin = async () => {
+        window.location.href = 'http://localhost:8000/auth/google';  
+    };
+
+
+    useEffect(() => {
+        setCSRFToken()
+    }, [])
 
     return(
         <>
@@ -109,6 +120,8 @@ function SignInPage(){
                             </button>
                         </div>
                     </form>
+
+                    <button onClick={handleGoogleLogin}>Login with Google</button>
 
                     <p className="mt-10 text-center text-sm/6 text-gray-500 font-semibold">
                         Not a member?{' '}

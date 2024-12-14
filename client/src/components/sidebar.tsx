@@ -10,13 +10,39 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip"
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
+// import { useEffect, useState } from "react";
 
 function SideBar(){
+
+    // type UserData = {
+    //     id: number,
+    //     name: string,
+    //     email: string,
+    // }
+
+    // const [user, setUser] = useState<UserData>();
+
+
+    // NAGA INFINITE NIG REQUEST TUN E SAON PAG FETCH NA KAISA LANG
+    // useEffect(() => {
+    //     fetch('http://localhost:8000/api/user', {
+    //         method: 'GET',
+    //         credentials: 'include', 
+    //     }).then(async (res) => {
+    //         const user = await res.json();
+    //         setUser(user)
+    //     })
+        
+    // }, [user])
+
+    
+
     return(
         <div className="fixed top-0 left-0 h-full w-[8%] flex flex-col gap-5 bg-indigo-600 p-5">
             <img src="/img/expensync_logo.png" alt="ExpenSync Logo"/>
 
             <Links />
+            {/* <h1>{user?.id}</h1> */}
         </div>
     )
 }
