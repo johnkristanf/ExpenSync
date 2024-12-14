@@ -31,7 +31,8 @@ jobs:
           php artisan migrate --env=testing
           php artisan test --log-junit=tests/_output/test-report.xml
       - name: Upload test report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: test-report
           path: tests/_output/test-report.xml
+
